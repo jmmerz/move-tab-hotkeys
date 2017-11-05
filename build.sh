@@ -50,6 +50,8 @@ fi
 
 crxmake ${CRX_OPTS[@]}
 
+zip -r artifacts/chrome/${name}.zip ${srcdir}
+
 if [ $newKey -eq 1 ]
 then
     mkdir -p ${keydir}
