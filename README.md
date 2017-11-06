@@ -14,8 +14,6 @@ For all of the above, pinned and un-pinned tabs are treated separately.
 
 Pinned tabs are kept in one block at the start of the tab bar, and un-pinned tabs are in a second block to the right. Whenever a tab is moved left/right or to start/end, that move happens within the part of the tab bar corresponding to it's pinned status.
 
-#### Install for Firefox
-TODO: Add URL
-
-#### Install for Chrome:
-TODO: Add URL
+#### Installation:
+* [Install for Firefox](https://addons.mozilla.org/en-US/firefox/addon/move-tab-hotkeys/)
+* [Install for Chrome](https://chrome.google.com/webstore/detail/move-tab-hotkeys/paafmjjgeiociknojggclhkbkaffjgoe)
