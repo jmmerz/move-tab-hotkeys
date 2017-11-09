@@ -14,9 +14,12 @@
         "48": "icons/icon48.png",
         "64": "icons/icon64.png"
     },
- 
+
     "background": {
-        "scripts": ["moveTabs.js"]
+        "scripts": [
+            "browserCompatibility.js",
+            "moveTabs.js"
+        ]
     },
     "commands": {
         "move-tab-left": {

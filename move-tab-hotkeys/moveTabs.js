@@ -1,11 +1,5 @@
 const DEBUG = false; // TODO: Could enable/disable via configuration
 
-const IS_FIREFOX = (typeof browser !== 'undefined');
-const IS_CHROME = (typeof chrome !== 'undefined');
-
-const TABS = IS_FIREFOX ? browser.tabs : IS_CHROME ? chrome.tabs : null;
-const COMMANDS = IS_FIREFOX ? browser.commands : IS_CHROME ? chrome.commands : null;
-
 // TODO: Try to modify shortcuts via config?
 
 /**
@@ -121,7 +115,7 @@ function moveTabLast(tabs, tab) {
 
 function moveTabToIndex(tab, newIndex) {
     if(DEBUG) console.log(`moving tab#${tab.id} from ${tab.index} to ${newIndex}`);
-    TABS.move([tab.id], { index: newIndex });
+    BROWSER.tabs.move([tab.id], { index: newIndex });
 }
 
 function runOnSelectedTab(callback) {
@@ -143,9 +137,9 @@ function getCurrentWindowTabs(callback) {
     };
 
     if(IS_FIREFOX) {
-        TABS.query(queryInfo).then(callback);
+        BROWSER.tabs.query(queryInfo).then(callback);
     } else if(IS_CHROME) {
-        TABS.query(queryInfo, callback);
+        BROWSER.tabs.query(queryInfo, callback);
     }
 }
 
@@ -163,7 +157,7 @@ function logTabListData(tabs) {
 
 
 
-COMMANDS.onCommand.addListener((command) => {
+BROWSER.commands.onCommand.addListener((command) => {
     if(DEBUG) console.log("onCommand-log event received for message: " + command);
 
     switch(command) {
