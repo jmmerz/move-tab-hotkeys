@@ -1,6 +1,5 @@
-const DEBUG = false; // TODO: Could enable/disable via configuration
-
-// TODO: Try to modify shortcuts via config?
+// Configurable options:
+var disableTabWrap = false;
 
 /**
  * Finds the index of the first pinned tab in a list of tabs.
@@ -54,10 +53,10 @@ function getLastUnpinnedTabIndex(tabs) {
 function moveTabLeft(tabs, tab) {
     var newIndex = tab.index-1;
     if(tab.pinned) {
-        if(newIndex < getFirstPinnedTabIndex(tabs)) {
+        if(!disableTabWrap && newIndex < getFirstPinnedTabIndex(tabs)) {
             newIndex = getLastPinnedTabIndex(tabs);
         }
-    } else if(newIndex < getFirstUnpinnedTabIndex(tabs)) {
+    } else if(!disableTabWrap && newIndex < getFirstUnpinnedTabIndex(tabs)) {
         newIndex = getLastUnpinnedTabIndex(tabs);
     }
 
@@ -73,10 +72,10 @@ function moveTabLeft(tabs, tab) {
 function moveTabRight(tabs, tab) {
     var newIndex = tab.index+1;
     if(tab.pinned) {
-        if(newIndex > getLastPinnedTabIndex(tabs)) {
+        if(!disableTabWrap && newIndex > getLastPinnedTabIndex(tabs)) {
             newIndex = getFirstPinnedTabIndex(tabs);
         }
-    } else if(newIndex > getLastUnpinnedTabIndex(tabs)) {
+    } else if(!disableTabWrap && newIndex > getLastUnpinnedTabIndex(tabs)) {
         newIndex = getFirstUnpinnedTabIndex(tabs);
     }
 
@@ -158,7 +157,7 @@ function logTabListData(tabs) {
 
 
 BROWSER.commands.onCommand.addListener((command) => {
-    if(DEBUG) console.log("onCommand-log event received for message: " + command);
+    if(DEBUG) console.log("onCommand event received for message: " + command);
 
     switch(command) {
       case "move-tab-left":
@@ -176,3 +175,40 @@ BROWSER.commands.onCommand.addListener((command) => {
     }
 });
 
+BROWSER.storage.onChanged.addListener((changes, area) => {
+
+    var changedItems = Object.keys(changes);
+    for (var storageKey of changedItems) {
+        switch(storageKey) {
+            case "disable_tab_wrap":
+                disableTabWrap = changes[storageKey].newValue;
+                logOptionChange(changes, storageKey);
+                break;
+            default:
+                // Do nothing
+        }
+    }
+
+});
+
+// Initialize Options
+var initRequired = true;
+if(initRequired) {
+    (function() {
+        function setDebugLogging(result) {
+            if(result == null || result.disable_tab_wrap == null) {
+                disableTabWrap = false;
+            } else {
+                disableTabWrap = result.disable_tab_wrap;
+            }
+        }
+
+        if(IS_FIREFOX) {
+            BROWSER.storage.local.get("disable_tab_wrap").then(setDebugLogging);
+        } else if (IS_CHROME) {
+            BROWSER.storage.local.get("disable_tab_wrap", setDebugLogging);
+        }
+    })();
+
+    initRequired = false;
+}

@@ -3,7 +3,7 @@
     "description": "Hotkeys to move tabs around",
     "homepage_url": "https://github.com/jmmerz/move-tab-hotkeys",
     "manifest_version": 2,
-    "version": "1.0",
+    "version": "1.1.0",
     "applications": {
         "gecko": {
             "id": "move_tabs_hotkeys@jmmerz.github"
@@ -14,10 +14,14 @@
         "48": "icons/icon48.png",
         "64": "icons/icon64.png"
     },
+    "permissions": [
+        "storage"
+    ],
 
     "background": {
         "scripts": [
-            "browserCompatibility.js",
+            "common/browserCompatibility.js",
+            "common/globalOptions.js",
             "moveTabs.js"
         ]
     },
@@ -38,5 +42,7 @@
             "suggested_key": { "default": "Alt+Shift+9" },
             "description": "Moves the current tab to the end"
         }
-    }
-}
+    },
+    "options_ui": {
+        "page": "options/options.html"
+    }}
