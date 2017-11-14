@@ -5,6 +5,17 @@ mkdir -p artifacts
 name=move-tab-hotkeys
 srcdir=$name
 
+manifest="${srcdir}/manifest.json"
+
+extensionName=`jq .name "$manifest"`
+extensionName=${extensionName//\"}
+version=`jq .version "$manifest"`
+version=${version//\"}
+
+
+echo "Building '$extensionName' version: $version"
+echo
+
 # Build for Firefox:
 echo "----- Building for Firefox -----"
 web-ext build --source-dir ${srcdir} --artifacts-dir artifacts/firefox --overwrite-dest
@@ -35,9 +46,10 @@ mkdir -p artifacts/chrome
 ## 
 ## chrome ${CHROME_BUILDOPTS}
 
+crxFile="artifacts/chrome/${name}-${version}.crx"
 declare -a CRX_OPTS
 CRX_OPTS[${#CRX_OPTS[@]}+1]="--pack-extension=$srcdir"
-CRX_OPTS[${#CRX_OPTS[@]}+1]="--extension-output=artifacts/chrome/${name}.crx"
+CRX_OPTS[${#CRX_OPTS[@]}+1]="--extension-output=${crxFile}"
 keydir=_local/chrome
 keyfile=${keydir}/${name}.pem
 newKey=0
@@ -50,7 +62,9 @@ fi
 
 crxmake ${CRX_OPTS[@]}
 
-zip -r artifacts/chrome/${name}.zip ${srcdir}
+zipFile="artifacts/chrome/${name}-${version}.zip"
+rm "${zipFile}"
+zip -r "${zipFile}" ${srcdir} -x '**/.*.sw*'
 
 if [ $newKey -eq 1 ]
 then
