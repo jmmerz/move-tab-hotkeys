@@ -1,12 +1,5 @@
-const DEBUG = false; // TODO: Could enable/disable via configuration
-
-const IS_FIREFOX = (typeof browser !== 'undefined');
-const IS_CHROME = (typeof chrome !== 'undefined');
-
-const TABS = IS_FIREFOX ? browser.tabs : IS_CHROME ? chrome.tabs : null;
-const COMMANDS = IS_FIREFOX ? browser.commands : IS_CHROME ? chrome.commands : null;
-
-// TODO: Try to modify shortcuts via config?
+// Configurable options:
+var disableTabWrap = false;
 
 /**
  * Finds the index of the first pinned tab in a list of tabs.
@@ -60,10 +53,10 @@ function getLastUnpinnedTabIndex(tabs) {
 function moveTabLeft(tabs, tab) {
     var newIndex = tab.index-1;
     if(tab.pinned) {
-        if(newIndex < getFirstPinnedTabIndex(tabs)) {
+        if(!disableTabWrap && newIndex < getFirstPinnedTabIndex(tabs)) {
             newIndex = getLastPinnedTabIndex(tabs);
         }
-    } else if(newIndex < getFirstUnpinnedTabIndex(tabs)) {
+    } else if(!disableTabWrap && newIndex < getFirstUnpinnedTabIndex(tabs)) {
         newIndex = getLastUnpinnedTabIndex(tabs);
     }
 
@@ -79,10 +72,10 @@ function moveTabLeft(tabs, tab) {
 function moveTabRight(tabs, tab) {
     var newIndex = tab.index+1;
     if(tab.pinned) {
-        if(newIndex > getLastPinnedTabIndex(tabs)) {
+        if(!disableTabWrap && newIndex > getLastPinnedTabIndex(tabs)) {
             newIndex = getFirstPinnedTabIndex(tabs);
         }
-    } else if(newIndex > getLastUnpinnedTabIndex(tabs)) {
+    } else if(!disableTabWrap && newIndex > getLastUnpinnedTabIndex(tabs)) {
         newIndex = getFirstUnpinnedTabIndex(tabs);
     }
 
@@ -121,7 +114,7 @@ function moveTabLast(tabs, tab) {
 
 function moveTabToIndex(tab, newIndex) {
     if(DEBUG) console.log(`moving tab#${tab.id} from ${tab.index} to ${newIndex}`);
-    TABS.move([tab.id], { index: newIndex });
+    BROWSER.tabs.move([tab.id], { index: newIndex });
 }
 
 function runOnSelectedTab(callback) {
@@ -143,9 +136,9 @@ function getCurrentWindowTabs(callback) {
     };
 
     if(IS_FIREFOX) {
-        TABS.query(queryInfo).then(callback);
+        BROWSER.tabs.query(queryInfo).then(callback);
     } else if(IS_CHROME) {
-        TABS.query(queryInfo, callback);
+        BROWSER.tabs.query(queryInfo, callback);
     }
 }
 
@@ -163,8 +156,8 @@ function logTabListData(tabs) {
 
 
 
-COMMANDS.onCommand.addListener((command) => {
-    if(DEBUG) console.log("onCommand-log event received for message: " + command);
+BROWSER.commands.onCommand.addListener((command) => {
+    if(DEBUG) console.log("onCommand event received for message: " + command);
 
     switch(command) {
       case "move-tab-left":
@@ -182,3 +175,40 @@ COMMANDS.onCommand.addListener((command) => {
     }
 });
 
+BROWSER.storage.onChanged.addListener((changes, area) => {
+
+    var changedItems = Object.keys(changes);
+    for (var storageKey of changedItems) {
+        switch(storageKey) {
+            case "disable_tab_wrap":
+                disableTabWrap = changes[storageKey].newValue;
+                logOptionChange(changes, storageKey);
+                break;
+            default:
+                // Do nothing
+        }
+    }
+
+});
+
+// Initialize Options
+var initRequired = true;
+if(initRequired) {
+    (function() {
+        function setDebugLogging(result) {
+            if(result == null || result.disable_tab_wrap == null) {
+                disableTabWrap = false;
+            } else {
+                disableTabWrap = result.disable_tab_wrap;
+            }
+        }
+
+        if(IS_FIREFOX) {
+            BROWSER.storage.local.get("disable_tab_wrap").then(setDebugLogging);
+        } else if (IS_CHROME) {
+            BROWSER.storage.local.get("disable_tab_wrap", setDebugLogging);
+        }
+    })();
+
+    initRequired = false;
+}

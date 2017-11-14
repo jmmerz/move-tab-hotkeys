@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+
+  <body>
+    <h2>Options:</h2>
+
+    <form id="optionsForm">
+      <input type="checkbox"
+             class="option"
+             id="disable_tab_wrap"
+             name="disable_tab_wrap"
+             value="disable_tab_wrap">
+      <label for="disable_tab_wrap" id="label_disable_tab_wrap">Disable tab wrapping</label>
+
+      <!-- Uncomment to run when debugging...
+      <br/>
+      <input type="checkbox"
+             class="option"
+             id="GLOBAL_enable_debug_logging"
+             name="GLOBAL_enable_debug_logging"
+             value="GLOBAL_enable_debug_logging">
+      <label for="GLOBAL_enable_debug_logging" id="label_GLOBAL_enable_debug_logging">Enable debug logging</label>
+      -->
+
+    </form>
+
+    <script src="../common/browserCompatibility.js"></script>
+    <script src="../common/globalOptions.js"></script>
+    <script src="options.js"></script>
+
+  </body>
+
+</html>
+
