@@ -155,7 +155,11 @@ function logTabListData(tabs) {
 }
 
 
-
+/*
+ *  Notes on command keys:
+ *      Chrome has a limit of 4 commands per extension. Because of this, we only
+ *      support number pad keys with NumLock on for Chrome.
+ */
 BROWSER.commands.onCommand.addListener((command) => {
     if(DEBUG) console.log("onCommand event received for message: " + command);
 
@@ -166,10 +170,14 @@ BROWSER.commands.onCommand.addListener((command) => {
       case "move-tab-right":
           runOnSelectedTab(moveTabRight);
           break;
-      case "move-tab-first":
+      case "move-tab-first-numbers-row":
+      case "move-tab-first-numpad-numlock-on":
+      case "move-tab-first-numpad-numlock-off":
           runOnSelectedTab(moveTabFirst);
           break;
-      case "move-tab-last":
+      case "move-tab-last-numbers-row":
+      case "move-tab-last-numpad-numlock-on":
+      case "move-tab-last-numpad-numlock-off":
           runOnSelectedTab(moveTabLast);
           break;
     }
