@@ -1,6 +1,9 @@
 // Configurable options:
 var disableTabWrap = false;
 
+var DIRECTION_LEFT = -1;
+var DIRECTION_RIGHT = 1;
+
 /**
  * Finds the index of the first pinned tab in a list of tabs.
  */
@@ -20,6 +23,8 @@ function getLastPinnedTabIndex(tabs) {
     for (var tab of tabs) {
         if (tab.pinned) {
             lastPinnedTabIndex = tab.index;
+        } else {
+            break;
         }
     }
     return lastPinnedTabIndex;
@@ -43,6 +48,51 @@ function getLastUnpinnedTabIndex(tabs) {
     return tabs[tabs.length-1].index;
 }
 
+/**
+ * Determine the last valid index that <tab> could be moved to within tablist
+ * <tabs> in direction <direction>.
+ *
+ * tabs: The list of tabs
+ * tab: The current tab
+ * direction: Either DIRECTION_LEFT or DIRECTION_RIGHT
+ */
+function getIndexLimitInDirection(tabs, tab, direction) {
+    var indexLimit;
+    if(tab.pinned) {
+        if(direction < 0) {
+            indexLimit = getFirstPinnedTabIndex(tabs);
+        } else {
+            indexLimit = getLastPinnedTabIndex(tabs);
+        }
+    } else {
+        if(direction < 0) {
+            indexLimit = getFirstUnpinnedTabIndex(tabs);
+        } else {
+            indexLimit = getLastUnpinnedTabIndex(tabs);
+        }
+    }
+    return indexLimit;
+}
+
+/**
+ * Get the next unhidden tab index in the specified direction from the current
+ * tab. This is needed to support hidden tabs in Firefox.
+ *
+ * tabs: The list of tabs
+ * tab: The current tab
+ * direction: Either DIRECTION_LEFT or DIRECTION_RIGHT
+ * indexLimit: index limit as determined by getIndexLimitInDirection
+ */
+function getNextUnhiddenTabIndex(tabs, tab, direction, indexLimit) {
+    var candidateIndex;
+    for(candidateIndex = tab.index + direction; candidateIndex != (indexLimit+direction); candidateIndex += direction) {
+        if(isHidden(tabs[candidateIndex])) {
+            continue;
+        }
+        break;
+    }
+    return candidateIndex;
+}
 
 /**
  * For unpinned tabs, moves the specified tab left one position, rotating to
@@ -51,13 +101,16 @@ function getLastUnpinnedTabIndex(tabs) {
  * the group of pinned tabs.
  */
 function moveTabLeft(tabs, tab) {
-    var newIndex = tab.index-1;
-    if(tab.pinned) {
-        if(!disableTabWrap && newIndex < getFirstPinnedTabIndex(tabs)) {
-            newIndex = getLastPinnedTabIndex(tabs);
+    var indexLimit = getIndexLimitInDirection(tabs, tab, DIRECTION_LEFT);
+    var newIndex = getNextUnhiddenTabIndex(tabs, tab, DIRECTION_LEFT, indexLimit);
+    if(!disableTabWrap) {
+        if(tab.pinned) {
+            if(newIndex < indexLimit) {
+                newIndex = getLastPinnedTabIndex(tabs);
+            }
+        } else if(newIndex < indexLimit) {
+            newIndex = getLastUnpinnedTabIndex(tabs);
         }
-    } else if(!disableTabWrap && newIndex < getFirstUnpinnedTabIndex(tabs)) {
-        newIndex = getLastUnpinnedTabIndex(tabs);
     }
 
     moveTabToIndex(tab, newIndex);
@@ -70,12 +123,13 @@ function moveTabLeft(tabs, tab) {
  * the group of pinned tabs.
  */
 function moveTabRight(tabs, tab) {
-    var newIndex = tab.index+1;
+    var indexLimit = getIndexLimitInDirection(tabs, tab, DIRECTION_RIGHT);
+    var newIndex = getNextUnhiddenTabIndex(tabs, tab, DIRECTION_RIGHT, indexLimit);
     if(tab.pinned) {
-        if(!disableTabWrap && newIndex > getLastPinnedTabIndex(tabs)) {
+        if(!disableTabWrap && newIndex > indexLimit) {
             newIndex = getFirstPinnedTabIndex(tabs);
         }
-    } else if(!disableTabWrap && newIndex > getLastUnpinnedTabIndex(tabs)) {
+    } else if(!disableTabWrap && newIndex > indexLimit) {
         newIndex = getFirstUnpinnedTabIndex(tabs);
     }
 
@@ -140,6 +194,14 @@ function getCurrentWindowTabs(callback) {
     } else if(IS_CHROME) {
         BROWSER.tabs.query(queryInfo, callback);
     }
+}
+
+function isHidden(tab) {
+    if(IS_FIREFOX) {
+        return (typeof tab.hidden !== 'undefined') && tab.hidden;
+    }
+    // Chrome does not support tab hiding, so tab _can't_ be hidden
+    return false;
 }
 
 function logTabListData(tabs) {
