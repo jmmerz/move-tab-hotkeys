@@ -1,2 +1,6 @@
+# Directories not to be packaged:
 _local
 artifacts
+
+# Generated files:
+move-tab-hotkeys/manifest.json
