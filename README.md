@@ -21,6 +21,9 @@ Pinned tabs are kept in one block at the start of the tab bar, and un-pinned tab
 
 ## Version History:
 
+#### [1.3.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v1.3.0):
+* Add logic for skipping over hidden tabs in Firefox. Avoids situation where the tab must be moved left/right multiple times to pass hidden tabs.
+
 #### [1.2.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v1.2.0):
 * Fix use of Alt+Shift+0/9 using the numeric keypad.
 * Add variant of the Chrome version to allow use of number pad and work around Chrome's limitation of 4 keyboard commands per extension.
