@@ -1,40 +1,40 @@
     "commands": {
         "move-tab-left": {
             "suggested_key": { "default": "Alt+Shift+Left" },
-            "description": "Moves the current tab left one tab"
+            "description": "Move the current tab left one tab"
         },
 
 
         "move-tab-right": {
             "suggested_key": { "default": "Alt+Shift+Right" },
-            "description": "Moves the current tab right one tab"
+            "description": "Move the current tab right one tab"
         },
 
 
         "move-tab-first-numbers-row": {
             "suggested_key": { "default": "Alt+Shift+0" },
-            "description": "Moves the current tab to the start"
+            "description": "Move the current tab to the start"
         },
         "move-tab-first-numpad-numlock-on": {
             "suggested_key": { "default": "Alt+Insert" },
-            "description": "Moves the current tab to the start (Numeric Keypad with NumLock On)"
+            "description": "Move the current tab to the start (Numeric Keypad with NumLock On)"
         },
         "move-tab-first-numpad-numlock-off": {
             "suggested_key": { "default": "Alt+Shift+Insert" },
-            "description": "Moves the current tab to the start (Numeric Keypad with NumLock Off)"
+            "description": "Move the current tab to the start (Numeric Keypad with NumLock Off)"
         },
 
 
         "move-tab-last-numbers-row": {
             "suggested_key": { "default": "Alt+Shift+9" },
-            "description": "Moves the current tab to the end"
+            "description": "Move the current tab to the end"
         },
         "move-tab-last-numpad-numlock-on": {
             "suggested_key": { "default": "Alt+PageUp" },
-            "description": "Moves the current tab to the end (Numeric Keypad with NumLock On)"
+            "description": "Move the current tab to the end (Numeric Keypad with NumLock On)"
         },
         "move-tab-last-numpad-numlock-off": {
             "suggested_key": { "default": "Alt+Shift+PageUp" },
-            "description": "Moves the current tab to the end (Numeric Keypad with NumLock Off)"
+            "description": "Move the current tab to the end (Numeric Keypad with NumLock Off)"
         }
     }
