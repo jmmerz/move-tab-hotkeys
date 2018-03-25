@@ -1,0 +1,24 @@
+1. Push new code!
+2. Merge to master branch.
+3. Add a tag to master:
+    git checkout master
+    git tag v#.#.#
+    git push --tags
+4. In GitHub:
+   1. Releases
+   2. Draft a new Release
+   3. ...?
+
+5. Checkout the new release tag from above:
+   git checkout v#.#.#
+6. Run the build:
+   build.sh all
+7. Test all versions locally!
+8. Upload Firefox version to addons.mozilla.org
+   1. Log in to addons.mozilla.org
+   2. Go to https://addons.mozilla.org/en-US/developers/addons
+   3. Go through process.
+9. Upload Chrome version (both of them):
+   1. Log into the Developer Dashboard: https://chrome.google.com/webstore/developer/dashboard
+   2. Go to upload new version
+   3. Update history as needed

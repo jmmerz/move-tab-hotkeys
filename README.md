@@ -17,11 +17,15 @@ Pinned tabs are kept in one block at the start of the tab bar, and un-pinned tab
 ## Installation:
 * [Install for Firefox](https://addons.mozilla.org/en-US/firefox/addon/move-tab-hotkeys/)
 * [Install for Chrome](https://chrome.google.com/webstore/detail/move-tab-hotkeys/paafmjjgeiociknojggclhkbkaffjgoe)
+    * [Install Number Chrome - Extra addon for using number pad](https://chrome.google.com/webstore/detail/omhajbebapbleblliebjpmddcmalofgp)
 
 ## Version History:
 
-#### [1.1.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/1.1.0):
+#### [1.2.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v1.2.0):
+* Fix use of Alt+Shift+0/9 using the numeric keypad.
+
+#### [1.1.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v1.1.0):
 * Add option to disable tab wrapping at start/end of tab bar.
 
-#### [1.0.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/1.0.0):
+#### [1.0.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v1.0.0):
 * Initial release.
