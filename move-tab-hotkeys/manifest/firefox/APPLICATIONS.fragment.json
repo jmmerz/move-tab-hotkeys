@@ -1,6 +1,7 @@
     "applications": {
         "gecko": {
-            "id": "move_tabs_hotkeys@jmmerz.github"
+            "id": "move_tabs_hotkeys@jmmerz.github",
+            "strict_min_version": "60.0b5"
         }
     },
 
