@@ -21,6 +21,10 @@ Pinned tabs are kept in one block at the start of the tab bar, and un-pinned tab
 
 ## Version History:
 
+#### [2.0.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v2.0.0):
+* Firefox: Add ability to customize shortcuts.
+* Chrome: Fix logic to correctly disable tab wrapping for the first tab in the bar.
+
 #### [1.3.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v1.3.0):
 * Add logic for skipping over hidden tabs in Firefox. Avoids situation where the tab must be moved left/right multiple times to pass hidden tabs.
 
