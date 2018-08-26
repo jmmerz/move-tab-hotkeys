@@ -3,31 +3,218 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <style type="text/css">
+        .main {
+          max-width: 650px;
+        }
+
+        h2 {
+          margin-top: 5px;
+          margin-bottom: 0px;
+          padding-top: 0px;
+          padding-bottom: 5px;
+        }
+
+        h3 {
+          margin-top: 5px;
+          padding-top: 5px;
+          margin-bottom: 0px;
+          padding-bottom: 5px;
+        }
+
+        /* Shortcut options should only be displayed in Firefox. */
+        #shortcutOptions {
+          display: none;
+        }
+
+        #shortcutOptions.browser-firefox {
+          display: block;
+        }
+
+        div.optionGroup {
+          padding-left: 5px;
+          padding-right: 5px;
+          padding-bottom: 10px;
+          border-width: 1px;
+          border-style: solid;
+          border-color: #AAAAAA;
+        }
+
+        div.optionSubGroup {
+          padding-left: 10px;
+        }
+
+        .alignleft {
+          float: left;
+        }
+
+        .alignright {
+          float: right;
+          padding-right: 20px;
+        }
+
+        /* BEGIN: Shortcuts help animation: {{{ */
+        /* Demo: https://codepen.io/anon/pen/LJpWPY */
+        .transform {
+          transition: all 0.3s ease;
+        }
+        #shortcutHelpTextToggle:hover {
+          cursor: help;
+        }
+        #shortcutHelpTextToggle {
+          position: relative;
+          z-index: 400;
+          color: #553333;
+          font-size: 26px;
+        }
+        .shortcutHelpContainer {
+          position: absolute;
+          right: 0px;
+          top: 0px;
+
+          /* max-height of 0 is necessary to transition to/from max-height
+           * specified in .shortcutHelpContainerVisible */
+          max-height: 0px;
+          width: 0px;
+
+          background-color: #F8F694;
+          overflow: hidden;
+          z-index: 200;
+
+          padding-left: 10px;
+          padding-right: 10px;
+        }
+        .shortcutHelpContainerVisible {
+          max-height: 500px;
+          width: 90%;
+          opacity: 0.95;
+          overflow-y: auto;
+          border-width: 1px;
+          border-style: solid;
+        }
+        /* }}} END: Shortcuts help animation: */
+
+        label {
+          display: inline-block;
+          min-width: 200px;
+          text-align: left;
+        }
+
+        input[type = "checkbox"] {
+          vertical-align: text-top;
+        }
+
+        .input-validation-status {
+          display: inline-flex;
+
+          justify-content: center;
+          align-items: center;
+          width:17px;
+          height:17px;
+
+          font-size: 20px;
+
+          margin-left:2px;
+          margin-right:2px;
+        }
+
+        input[type = "text"].unset ~ .input-validation-status {
+          color: #999999;
+        }
+        input[type = "text"].valid ~ .input-validation-status {
+          color: #008800;
+        }
+        input[type = "text"].invalid ~ .input-validation-status {
+          color: #BB0000;
+        }
+
+        .secondary-shortcut-explanation {
+          font-style: italic;
+          padding-bottom: 12px;
+        }
+
+        .example-text {
+          font-style: italic;
+          padding-left: 30px;
+        }
+    </style>
   </head>
 
   <body>
-    <h2>Options:</h2>
 
-    <form id="optionsForm">
-      <input type="checkbox"
-             class="option"
-             id="disable_tab_wrap"
-             name="disable_tab_wrap"
-             value="disable_tab_wrap">
-      <label for="disable_tab_wrap" id="label_disable_tab_wrap">Disable tab wrapping</label>
+    <div class='main'>
+      <form id="optionsForm" autocomplete="off">
+     
+        <div id='shortcutOptions' class='optionGroup'>
+          <div id="shortcuts-header" style='position: relative'>
+            <h2 class="alignleft">Keyboard Shortcuts:</h2>
+            <h2 id='shortcutHelpTextToggle' class="alignright"><!--&#x2754;-->?</h2>
+            <div class='transform shortcutHelpContainer' id='shortcutHelpTextDiv'>
+              <div class='shortcutHelpText'>
+                <h3>Keyboard Shortcut Help:</h3>
+                <h4>Use any of these patterns:</h4>
+                <ul>
+                  <li><b>Modifier+Key</b> <i>(Example: Alt+Left)</i></li>
+                  <li><b>Modifier+SecondaryModifier+Key</b> <i>(Example: Alt+Shift+Left)</i></li>
+                  <li><b>MediaKey</b> <i>(Example: MediaNextTrack)</i></li>
+                </ul>
+                <h4>Definitions:</h4>
+                <ul>
+                  <li><u>Modifier</u> (<b>mandatory</b>, except for function keys (F1-12)): "Ctrl", "Alt", "Command" or "MacCtrl"</li>
+                  <li><u>Secondary Modifier</u> (<i>optional</i>): For Firefox version &lt; 63, must be "Shift". For Firefox version 63 or later, any one of "Ctrl", "Alt", "Command" and "MacCtrl" that has not been used as the main modifier is also allowed.</li>
+                  <li><u>Key</u> (<b>mandatory</b>):
+                    <ul>
+                      <li>Letters: A-Z</li>
+                      <li>Numbers: 0-9</li>
+                      <li>Function keys: F1-F12</li>
+                      <li>Cursor keys: Up, Down, Left, Right</li>
+                      <li>Movement keys: Home, End, PageUp, PageDown</li>
+                      <li>Other keys: Comma, Period, Space, Insert, Delete</li>
+                    </ul>
+                  </li>
+                  <li><u>Media Key</u>: "MediaNextTrack", "MediaPlayPause", "MediaPrevTrack" or "MediaStop"</li>
+                </ul>
 
-      <!-- Uncomment to run when debugging...
-      <br/>
-      <input type="checkbox"
-             class="option"
-             id="GLOBAL_enable_debug_logging"
-             name="GLOBAL_enable_debug_logging"
-             value="GLOBAL_enable_debug_logging">
-      <label for="GLOBAL_enable_debug_logging" id="label_GLOBAL_enable_debug_logging">Enable debug logging</label>
-      -->
+              </div>
+            </div>
+          </div>
+          <div style="clear: both;"></div>
+          <div id='custom_shortcuts_primary' class='optionSubGroup'>
+            <h3>Primary Shortcuts:</h3>
+          </div>
 
-    </form>
-
+          <hr/>
+   
+          <div id='custom_shortcuts_secondary' class='optionSubGroup'>
+            <h3>Secondary Shortcuts:</h3>
+            <div class="secondary-shortcut-explanation">(Additional instances of the movements to start and end. This allows multiple shortcuts, for instance to allow use of the numeric keypad.)</div>
+          </div>
+        </div>
+     
+        <div class='optionGroup'>
+          <h2>Tab Movement Options:</h2>
+          <input type="checkbox"
+                 class="autoChangeOption"
+                 id="disable_tab_wrap"
+                 name="disable_tab_wrap"
+                 value="disable_tab_wrap">
+          <label for="disable_tab_wrap" id="label_disable_tab_wrap">Disable tab wrapping</label>
+        </div>
+     
+        <div class='optionGroup'>
+          <h2>Debugging:</h2>
+          <input type="checkbox"
+                 class="autoChangeOption"
+                 id="GLOBAL_enable_debug_logging"
+                 name="GLOBAL_enable_debug_logging"
+                 value="GLOBAL_enable_debug_logging">
+          <label for="GLOBAL_enable_debug_logging" id="label_GLOBAL_enable_debug_logging">Enable debug logging</label>
+        </div>
+     
+      </form>
+    </div>
+     
+     
     <script src="../common/browserCompatibility.js"></script>
     <script src="../common/globalOptions.js"></script>
     <script src="options.js"></script>
