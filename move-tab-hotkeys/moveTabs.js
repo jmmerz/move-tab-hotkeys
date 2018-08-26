@@ -111,6 +111,14 @@ function moveTabLeft(tabs, tab) {
         } else if(newIndex < indexLimit) {
             newIndex = getLastUnpinnedTabIndex(tabs);
         }
+    } else {
+        // Tab wrapping is disabled. Firefox interprets tab index of -1 as 0,
+        // but Chrome as begun interpretting it to move to other end of tabs,
+        // so we need to limit that here.
+        if(newIndex < indexLimit) {
+            // Can't move further left.
+            newIndex = indexLimit;
+        }
     }
 
     moveTabToIndex(tab, newIndex);
