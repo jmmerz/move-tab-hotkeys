@@ -17,11 +17,11 @@
         },
         "move-tab-first-numpad-numlock-on": {
             "suggested_key": { "default": "Alt+Insert" },
-            "description": "Move the current tab to the start (Numeric Keypad with NumLock On)"
+            "description": "Move the current tab to the start (Example: 'Alt+Insert' for Numeric Keypad 0 with NumLock On)"
         },
         "move-tab-first-numpad-numlock-off": {
             "suggested_key": { "default": "Alt+Shift+Insert" },
-            "description": "Move the current tab to the start (Numeric Keypad with NumLock Off)"
+            "description": "Move the current tab to the start (Example: 'Alt+Shift+Insert' for Numeric Keypad 0 with NumLock Off)"
         },
 
 
@@ -31,10 +31,10 @@
         },
         "move-tab-last-numpad-numlock-on": {
             "suggested_key": { "default": "Alt+PageUp" },
-            "description": "Move the current tab to the end (Numeric Keypad with NumLock On)"
+            "description": "Move the current tab to the end (Example: 'Alt+PageUp' for Numeric Keypad 9 with NumLock On)"
         },
         "move-tab-last-numpad-numlock-off": {
             "suggested_key": { "default": "Alt+Shift+PageUp" },
-            "description": "Move the current tab to the end (Numeric Keypad with NumLock Off)"
+            "description": "Move the current tab to the end (Example: 'Alt+Shift+PageUp' for Numeric Keypad with NumLock Off)"
         }
     }
