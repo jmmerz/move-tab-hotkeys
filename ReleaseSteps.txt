@@ -2,6 +2,7 @@
 2. Merge to master branch.
 3. Add a tag to master:
     git checkout master
+    git pull
     git tag v#.#.#
     git push --tags
 4. In GitHub:
