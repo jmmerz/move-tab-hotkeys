@@ -64,6 +64,7 @@ function build_manifest() {
     done
 
     envsubst < ${manifestTemplate} > ${manifest}
+    unset ${fragmentNames[@]}
 }
 
 function getExtensionName() {
