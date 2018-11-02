@@ -58,15 +58,11 @@ if(IS_FIREFOX) {
     document.getElementById('shortcutOptions').classList.add('browser-firefox');
 
     /**
-     * Shortcut key validation
+     * Shortcut key validation:
      * See: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/commands#Key_combinations
      *
-     * TODO: This will change in FF 63 to allow unused primary modifier keys as secondary modifiers
-     * in addition to 'Shift'
-     *      See: https://bugzilla.mozilla.org/show_bug.cgi?id=1416348
-     *
-     * These regexes are derived from the error message logged to the console as a result of sending
-     * an invalid key to commands.update():
+     * These regexes are derived from the error message previously logged (pre-FF 63) to the console
+     * as a result of sending an invalid key to commands.update():
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      *     Error: Type error for parameter detail (
      *         Error processing shortcut: Value "Alt+Shift+<"
@@ -76,16 +72,34 @@ if(IS_FIREFOX) {
      *             or match the pattern /^(MediaNextTrack|MediaPlayPause|MediaPrevTrack|MediaStop)$/
      *     ) for commands.update.
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     * NOTE: Similar comment to this below at the definition of isValidCommandShortcut().
+     *
+     * Starting with FF 63, shortcut keys were updated to allow unused primary modifier keys as
+     * secondary modifiers in addition to 'Shift'
+     *      See: https://bugzilla.mozilla.org/show_bug.cgi?id=1416348
+     *
+     * The patterns ending with _FF63_PLUS are adapted from the originals above to accept the updated
+     * patterns. They _do_not_ validate that the same modifier is not used as primary /and/ secondary.
+     * That is done by the pattern INVALID_SHORTCUT_PATTERN defined below. It will be considered
+     * _always_ incorrect to have the same modifier key appear twice for both the primaryModifier and
+     * secondaryModifier.
+     *
+     * NOTE: This comment also applies to the definition of isValidCommandShortcut().
      */
-    var VALID_SHORTCUT_PATTERN_1 = /^\s*(Alt|Ctrl|Command|MacCtrl)\s*\+\s*(Shift\s*\+\s*)?([A-Z0-9]|Comma|Period|Home|End|PageUp|PageDown|Space|Insert|Delete|Up|Down|Left|Right)\s*$/;
-    var VALID_SHORTCUT_PATTERN_2 = /^\s*((Alt|Ctrl|Command|MacCtrl)\s*\+\s*)?(Shift\s*\+\s*)?(F[1-9]|F1[0-2])\s*$/;
+    var VALID_SHORTCUT_PATTERN_1 =           /^\s*(Alt|Ctrl|Command|MacCtrl)\s*\+\s*(Shift\s*\+\s*)?([A-Z0-9]|Comma|Period|Home|End|PageUp|PageDown|Space|Insert|Delete|Up|Down|Left|Right)\s*$/;
+    var VALID_SHORTCUT_PATTERN_1_FF63_PLUS = /^\s*(Alt|Ctrl|Command|MacCtrl)\s*\+\s*((Alt|Ctrl|Command|MacCtrl|Shift)\s*\+\s*)?([A-Z0-9]|Comma|Period|Home|End|PageUp|PageDown|Space|Insert|Delete|Up|Down|Left|Right)\s*$/;
+    var VALID_SHORTCUT_PATTERN_2 =           /^\s*((Alt|Ctrl|Command|MacCtrl)\s*\+\s*)?(Shift\s*\+\s*)?(F[1-9]|F1[0-2])\s*$/;
+    var VALID_SHORTCUT_PATTERN_2_FF63_PLUS = /^\s*((Alt|Ctrl|Command|MacCtrl)\s*\+\s*)?((Alt|Ctrl|Command|MacCtrl|Shift)\s*\+\s*)?(F[1-9]|F1[0-2])\s*$/;
     var VALID_SHORTCUT_PATTERN_3 = /^(MediaNextTrack|MediaPlayPause|MediaPrevTrack|MediaStop)$/;
     var VALID_SHORTCUT_PATTERNS = [VALID_SHORTCUT_PATTERN_1,
                                    VALID_SHORTCUT_PATTERN_2,
                                    VALID_SHORTCUT_PATTERN_3
                                   ];
+    var VALID_SHORTCUT_PATTERNS_FF_63_PLUS = [VALID_SHORTCUT_PATTERN_1_FF63_PLUS,
+                                              VALID_SHORTCUT_PATTERN_2_FF63_PLUS,
+                                              VALID_SHORTCUT_PATTERN_3
+                                             ];
     var CONTROL_KEY_PATTERN = /^.*(Alt|Ctrl|Control|Command|MacCtrl|Shift|OS.*).*/;
+    var INVALID_SHORTCUT_PATTERN = /.*(Alt|Ctrl|Control|Command|MacCtrl|Shift).*\1/ig;
 
     // Map with desired order of the hotkeys in Options page
     var commandName2OrderIndex = new Map();
@@ -271,6 +285,9 @@ if(IS_FIREFOX) {
         if(event.repeat) return;
 
         if(DEBUG) console.log(event);
+        let primaryModifier = '';
+        let secondaryModifier = '';
+        let key = ''
         let keyString = '';
 
         // Build the key combination in correct order to match one of the following:
@@ -327,27 +344,18 @@ if(IS_FIREFOX) {
     }
 
     /**
-     * Check if a keyString is a valid shortcut key. This could be fully automated by recording the
-     * current key, attempting to update to the new key, and then restoring the current key, but
-     * that has risks of being interrupted at an inopportune moment and corrupting the settings.
-     *
-     * At this time, we use the VALID_SHORTCUT_PATTERNS list which is derived from the error message
-     * given when attempting to update a command to use an invalid key.
-     *
-     * Example of such a message:
-     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     *     Error processing shortcut: Value "Alt+Shift+<"
-     *     must either:
-     *         match the pattern /^\s*(Alt|Ctrl|Command|MacCtrl)\s*\+\s*(Shift\s*\+\s*)?([A-Z0-9]|Comma|Period|Home|End|PageUp|PageDown|Space|Insert|Delete|Up|Down|Left|Right)\s*$/,
-     *         match the pattern /^\s*((Alt|Ctrl|Command|MacCtrl)\s*\+\s*)?(Shift\s*\+\s*)?(F[1-9]|F1[0-2])\s*$/,
-     *         or match the pattern /^(MediaNextTrack|MediaPlayPause|MediaPrevTrack|MediaStop)$/
-     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     * NOTE: Similar comment to this above by the definition of VALID_SHORTCUT_PATTERNS.
+     * See comment above starting with "Shortcut key validation:".
      */
     function isValidCommandShortcut(keyString) {
-        for(let regex of VALID_SHORTCUT_PATTERNS) {
-            if(regex.test(keyString)) {
-                return true;
+        let validShortcutPatterns = IS_FF_63_PLUS ? VALID_SHORTCUT_PATTERNS_FF_63_PLUS : VALID_SHORTCUT_PATTERNS;
+        // INVALID_SHORTCUT_PATTERN checks for double-instances of control keys that are only
+        // allowed once. The way we build the keyString should prevent this, but this is a
+        // double-check.
+        if(!INVALID_SHORTCUT_PATTERN.test(keyString)) {
+            for(let regex of validShortcutPatterns) {
+                if(regex.test(keyString)) {
+                    return true;
+                }
             }
         }
         return false;
