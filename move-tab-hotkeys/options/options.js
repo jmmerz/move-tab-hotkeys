@@ -55,18 +55,14 @@ document.querySelectorAll('form#optionsForm .autoChangeOption').addEventListener
 if(IS_FIREFOX) {
 
     // Shortcut options should only be displayed in Firefox.
-    document.getElementById('shortcutOptions').classList.add('browser-firefox');
+    document.getElementById('main').classList.add('browser-firefox');
 
     /**
-     * Shortcut key validation
+     * Shortcut key validation:
      * See: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/commands#Key_combinations
      *
-     * TODO: This will change in FF 63 to allow unused primary modifier keys as secondary modifiers
-     * in addition to 'Shift'
-     *      See: https://bugzilla.mozilla.org/show_bug.cgi?id=1416348
-     *
-     * These regexes are derived from the error message logged to the console as a result of sending
-     * an invalid key to commands.update():
+     * These regexes are derived from the error message previously logged (pre-FF 63) to the console
+     * as a result of sending an invalid key to commands.update():
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      *     Error: Type error for parameter detail (
      *         Error processing shortcut: Value "Alt+Shift+<"
@@ -76,16 +72,34 @@ if(IS_FIREFOX) {
      *             or match the pattern /^(MediaNextTrack|MediaPlayPause|MediaPrevTrack|MediaStop)$/
      *     ) for commands.update.
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     * NOTE: Similar comment to this below at the definition of isValidCommandShortcut().
+     *
+     * Starting with FF 63, shortcut keys were updated to allow unused primary modifier keys as
+     * secondary modifiers in addition to 'Shift'
+     *      See: https://bugzilla.mozilla.org/show_bug.cgi?id=1416348
+     *
+     * The patterns ending with _FF63_PLUS are adapted from the originals above to accept the updated
+     * patterns. They _do_not_ validate that the same modifier is not used as primary /and/ secondary.
+     * That is done by the pattern INVALID_SHORTCUT_PATTERN defined below. It will be considered
+     * _always_ incorrect to have the same modifier key appear twice for both the primaryModifier and
+     * secondaryModifier.
+     *
+     * NOTE: This comment also applies to the definition of isValidCommandShortcut().
      */
-    var VALID_SHORTCUT_PATTERN_1 = /^\s*(Alt|Ctrl|Command|MacCtrl)\s*\+\s*(Shift\s*\+\s*)?([A-Z0-9]|Comma|Period|Home|End|PageUp|PageDown|Space|Insert|Delete|Up|Down|Left|Right)\s*$/;
-    var VALID_SHORTCUT_PATTERN_2 = /^\s*((Alt|Ctrl|Command|MacCtrl)\s*\+\s*)?(Shift\s*\+\s*)?(F[1-9]|F1[0-2])\s*$/;
+    var VALID_SHORTCUT_PATTERN_1 =           /^\s*(Alt|Ctrl|Command|MacCtrl)\s*\+\s*(Shift\s*\+\s*)?([A-Z0-9]|Comma|Period|Home|End|PageUp|PageDown|Space|Insert|Delete|Up|Down|Left|Right)\s*$/;
+    var VALID_SHORTCUT_PATTERN_1_FF63_PLUS = /^\s*(Alt|Ctrl|Command|MacCtrl)\s*\+\s*((Alt|Ctrl|Command|MacCtrl|Shift)\s*\+\s*)?([A-Z0-9]|Comma|Period|Home|End|PageUp|PageDown|Space|Insert|Delete|Up|Down|Left|Right)\s*$/;
+    var VALID_SHORTCUT_PATTERN_2 =           /^\s*((Alt|Ctrl|Command|MacCtrl)\s*\+\s*)?(Shift\s*\+\s*)?(F[1-9]|F1[0-2])\s*$/;
+    var VALID_SHORTCUT_PATTERN_2_FF63_PLUS = /^\s*((Alt|Ctrl|Command|MacCtrl)\s*\+\s*)?((Alt|Ctrl|Command|MacCtrl|Shift)\s*\+\s*)?(F[1-9]|F1[0-2])\s*$/;
     var VALID_SHORTCUT_PATTERN_3 = /^(MediaNextTrack|MediaPlayPause|MediaPrevTrack|MediaStop)$/;
     var VALID_SHORTCUT_PATTERNS = [VALID_SHORTCUT_PATTERN_1,
                                    VALID_SHORTCUT_PATTERN_2,
                                    VALID_SHORTCUT_PATTERN_3
                                   ];
+    var VALID_SHORTCUT_PATTERNS_FF_63_PLUS = [VALID_SHORTCUT_PATTERN_1_FF63_PLUS,
+                                              VALID_SHORTCUT_PATTERN_2_FF63_PLUS,
+                                              VALID_SHORTCUT_PATTERN_3
+                                             ];
     var CONTROL_KEY_PATTERN = /^.*(Alt|Ctrl|Control|Command|MacCtrl|Shift|OS.*).*/;
+    var INVALID_SHORTCUT_PATTERN = /.*(Alt|Ctrl|Control|Command|MacCtrl|Shift).*\1/ig;
 
     // Map with desired order of the hotkeys in Options page
     var commandName2OrderIndex = new Map();
@@ -104,10 +118,17 @@ if(IS_FIREFOX) {
     /**
      * Classes used for shortcuts.
      */
+    const CLASS_OPTIONS_ROW = "options-row";
+    const CLASS_OPTIONS_LEFT = 'options-left';
+    const CLASS_OPTIONS_RIGHT = 'options-right';
     const CLASS_SHORTCUT_KEY = 'shortcutKey';
     const CLASS_SHORTCUT_UNSET = 'unset';
     const CLASS_SHORTCUT_VALID = 'valid';
     const CLASS_SHORTCUT_INVALID = 'invalid';
+    const CLASS_EXAMPLE_TEXT = 'example-text';
+    const CLASS_TOOLTIP_TEXT = 'tooltip-text';
+    const CLASS_TOOLTIP_TOP = 'tooltip-top';
+    const CLASS_HAS_TOOLTIP = 'has-tooltip';
 
     /**
      * Utility method to sort commands according to the commandName2OrderIndex defined above.
@@ -135,20 +156,28 @@ if(IS_FIREFOX) {
 
             let commandDiv = document.createElement('div');
             commandDiv.id = command.name + '_form';
+            commandDiv.classList.add(CLASS_OPTIONS_ROW);
 
             // Create label
+            let optionsLeftDiv = document.createElement('div');
+            optionsLeftDiv.classList.add(CLASS_OPTIONS_LEFT);
             let label = document.createElement('label');
             label.setAttribute('for', commandFieldId);
             let commandDescription = command.description;
             let commandExampleText = null;
             if(!isPrimarySet) {
                 commandExampleText = commandDescription.match(/.*( \(.*\)$)/)[1].trim();
+                // Strip the leading and trailing parenthesis from the example text
+                commandExampleText = commandExampleText.substring(1,commandExampleText.length-1);
                 commandDescription = commandDescription.match(/(.*) \(.*\)$/)[1];
             }
             label.appendChild(document.createTextNode(commandDescription + ':'));
-            commandDiv.appendChild(label);
+            optionsLeftDiv.appendChild(label);
 
             // Create <input>
+            let optionsRightDiv = document.createElement('div');
+            optionsRightDiv.classList.add(CLASS_OPTIONS_RIGHT);
+
             let inputField = document.createElement('input');
             inputField.type = 'text';
             inputField.id = commandFieldId;
@@ -157,17 +186,12 @@ if(IS_FIREFOX) {
             inputField.undoStack = new Array();
             inputField.currentKeyValue = command.shortcut;
             setInputFieldValue(inputField, command.shortcut);
-            commandDiv.appendChild(inputField);
+            optionsRightDiv.appendChild(inputField);
 
-            /*
-             * HTML Symbols:
-             * https://www.w3schools.com/charsets/ref_utf_geometric.asp
-             * https://www.w3schools.com/charsets/ref_utf_symbols.asp
-             */
-            let inputValidationStatusSpanUnset = document.createElement('span');
-            inputValidationStatusSpanUnset.classList.add('input-validation-status');
-            inputValidationStatusSpanUnset.appendChild(document.createTextNode('\u25CF')); // BLACK CIRCLE
-            commandDiv.appendChild(inputValidationStatusSpanUnset);
+            // Circle to indicate validity of specified keyboard shortcut
+            let inputValidationStatusDivUnset = document.createElement('div');
+            inputValidationStatusDivUnset.classList.add('input-validation-status');
+            optionsRightDiv.appendChild(inputValidationStatusDivUnset);
 
             // Create update button
             let updateShortcutButton = document.createElement('button');
@@ -175,7 +199,7 @@ if(IS_FIREFOX) {
             updateShortcutButton.appendChild(document.createTextNode('Update'));
             updateShortcutButton.inputFieldId = commandFieldId;
             updateShortcutButton.addEventListener('click', handleUpdateButtonClick);
-            commandDiv.appendChild(updateShortcutButton);
+            optionsRightDiv.appendChild(updateShortcutButton);
 
             // Create undo button (revert to pre-edit state)
             let undoShortcutButton = document.createElement('button');
@@ -183,7 +207,7 @@ if(IS_FIREFOX) {
             undoShortcutButton.appendChild(document.createTextNode('Undo'));
             undoShortcutButton.inputFieldId = commandFieldId;
             undoShortcutButton.addEventListener('click', handleUndoButtonClick);
-            commandDiv.appendChild(undoShortcutButton);
+            optionsRightDiv.appendChild(undoShortcutButton);
 
             // Create reset button (revert to addon defaults)
             let resetShortcutButton = document.createElement('button');
@@ -191,15 +215,21 @@ if(IS_FIREFOX) {
             resetShortcutButton.appendChild(document.createTextNode('Restore Default'));
             resetShortcutButton.inputFieldId = commandFieldId;
             resetShortcutButton.addEventListener('click', handleRestoreDefaultButtonClick);
-            commandDiv.appendChild(resetShortcutButton);
+            optionsRightDiv.appendChild(resetShortcutButton);
 
             // Add example text if present
             if(commandExampleText) {
-                let exampleTextDiv = document.createElement('div');
-                exampleTextDiv.classList.add('example-text');
-                exampleTextDiv.appendChild(document.createTextNode(commandExampleText));
-                commandDiv.appendChild(exampleTextDiv);
+                let toolTipText = document.createElement('span');
+                toolTipText.classList.add(CLASS_EXAMPLE_TEXT);
+                toolTipText.classList.add(CLASS_TOOLTIP_TEXT);
+                toolTipText.classList.add(CLASS_TOOLTIP_TOP);
+                toolTipText.appendChild(document.createTextNode(commandExampleText));
+                label.classList.add(CLASS_HAS_TOOLTIP);
+                label.appendChild(toolTipText);
             }
+
+            commandDiv.appendChild(optionsLeftDiv);
+            commandDiv.appendChild(optionsRightDiv);
 
             let customShortcutsDiv = isPrimarySet
                                         ? primaryCustomShortcutsDiv
@@ -271,6 +301,9 @@ if(IS_FIREFOX) {
         if(event.repeat) return;
 
         if(DEBUG) console.log(event);
+        let primaryModifier = '';
+        let secondaryModifier = '';
+        let key = ''
         let keyString = '';
 
         // Build the key combination in correct order to match one of the following:
@@ -327,27 +360,18 @@ if(IS_FIREFOX) {
     }
 
     /**
-     * Check if a keyString is a valid shortcut key. This could be fully automated by recording the
-     * current key, attempting to update to the new key, and then restoring the current key, but
-     * that has risks of being interrupted at an inopportune moment and corrupting the settings.
-     *
-     * At this time, we use the VALID_SHORTCUT_PATTERNS list which is derived from the error message
-     * given when attempting to update a command to use an invalid key.
-     *
-     * Example of such a message:
-     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     *     Error processing shortcut: Value "Alt+Shift+<"
-     *     must either:
-     *         match the pattern /^\s*(Alt|Ctrl|Command|MacCtrl)\s*\+\s*(Shift\s*\+\s*)?([A-Z0-9]|Comma|Period|Home|End|PageUp|PageDown|Space|Insert|Delete|Up|Down|Left|Right)\s*$/,
-     *         match the pattern /^\s*((Alt|Ctrl|Command|MacCtrl)\s*\+\s*)?(Shift\s*\+\s*)?(F[1-9]|F1[0-2])\s*$/,
-     *         or match the pattern /^(MediaNextTrack|MediaPlayPause|MediaPrevTrack|MediaStop)$/
-     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     * NOTE: Similar comment to this above by the definition of VALID_SHORTCUT_PATTERNS.
+     * See comment above starting with "Shortcut key validation:".
      */
     function isValidCommandShortcut(keyString) {
-        for(let regex of VALID_SHORTCUT_PATTERNS) {
-            if(regex.test(keyString)) {
-                return true;
+        let validShortcutPatterns = IS_FF_63_PLUS ? VALID_SHORTCUT_PATTERNS_FF_63_PLUS : VALID_SHORTCUT_PATTERNS;
+        // INVALID_SHORTCUT_PATTERN checks for double-instances of control keys that are only
+        // allowed once. The way we build the keyString should prevent this, but this is a
+        // double-check.
+        if(!INVALID_SHORTCUT_PATTERN.test(keyString)) {
+            for(let regex of validShortcutPatterns) {
+                if(regex.test(keyString)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -488,4 +512,6 @@ if(IS_FIREFOX) {
 
     document.addEventListener("DOMContentLoaded", initCustomShortcutFields);
     document.addEventListener("DOMContentLoaded", initShortcutHelpTextHandlers);
+} else if (IS_CHROME) {
+    document.getElementById('main').classList.add('browser-chrome');
 }

@@ -14,12 +14,30 @@ For all of the above, pinned and un-pinned tabs are treated separately.
 
 Pinned tabs are kept in one block at the start of the tab bar, and un-pinned tabs are in a second block to the right. Whenever a tab is moved left/right or to start/end, that move happens within the part of the tab bar corresponding to it's pinned status.
 
+### Multi-selected tabs
+If multiple tabs are selected, they can be moved together.
+* If the tabs are not adjacent, they are made adjacent upon first move per the behavior of dragging
+  multiple non-adjacent tabs in Firefox. This is a simpler behavior with fewer unexpected results
+  than what happens in Chrome for that situation.
+* This can be turned off by checking the "Don't move multi-selected tabs together" checkbox in the
+  options.
+* If a group of selected tabs includes both pinned and un-pinned tabs, the tabs will not be moved at
+  all.
+* On Firefox 63 and later, multiple-selection of tabs is not enabled by default. You must enable the
+  `browser.tabs.multiselect` property in `about:config`.
+
 ## Installation:
 * [Install for Firefox](https://addons.mozilla.org/en-US/firefox/addon/move-tab-hotkeys/)
 * [Install for Chrome](https://chrome.google.com/webstore/detail/move-tab-hotkeys/paafmjjgeiociknojggclhkbkaffjgoe)
     * [Install for Chrome - Extra addon for using number pad](https://chrome.google.com/webstore/detail/omhajbebapbleblliebjpmddcmalofgp)
 
 ## Version History:
+
+#### [2.2.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v2.2.0):
+* Add ability to move multiple tabs at once if multiple are selected. (#13)
+* Firefox: Update validation of shortcut keys to support newly allowed combinations starting with
+  Firefox 63.0. (#12)
+* Improvements to keyboard shortcut options alignment and positioning.
 
 #### [2.0.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v2.0.0):
 * Firefox: Add ability to customize shortcuts.
@@ -37,3 +55,4 @@ Pinned tabs are kept in one block at the start of the tab bar, and un-pinned tab
 
 #### [1.0.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v1.0.0):
 * Initial release.
+
