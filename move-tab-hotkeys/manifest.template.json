@@ -3,12 +3,13 @@
     "description": "Hotkeys to move tabs around",
     "homepage_url": "https://github.com/jmmerz/move-tab-hotkeys",
     "manifest_version": 2,
-    "version": "2.2.0",
+    "version": "2.2.1",
     ${APPLICATIONS}
     "author": "Jonathon Merz",
     "icons": {
         "48": "icons/icon48.png",
-        "64": "icons/icon64.png"
+        "64": "icons/icon64.png",
+        "128": "icons/icon128.png"
     },
     "permissions": [
         "storage"
