@@ -45,6 +45,20 @@ srcdir=$name
 manifest="${srcdir}/manifest.json"
 manifestTemplate="${srcdir}/manifest.template.json"
 
+# Crudely set OS based on OSTYPE
+case $OSTYPE in
+    (darwin*) OS=mac ;;
+    (cygwin*) OS=win ;;
+    (*) echo linux ;;
+esac
+
+function resolvePath() {
+    case $OS in
+        (win) echo `cygpath -am "$1"` ;;
+        (*)   echo "$1" ;;
+    esac
+}
+
 function build_manifest() {
     if [ -z "$1" ]
     then
@@ -117,55 +131,15 @@ function build_chrome() {
     build_manifest "${chromeType}"
     echoExtensionVersion
 
-    declare -a CRX_OPTS
-
-    # Required for headless mode
-    CHROME_BUILDOPTS="--disable-gpu --headless"
-
-    abs_srcdir=`cygpath -am ${srcdir}`
-    CHROME_BUILDOPTS="${CHROME_BUILDOPTS} --pack-extension='${abs_srcdir}'"
-
-    keydir=_local/${chromeType}
-    keyfileBasename=${artifactName}.pem
-    keyfile=${keydir}/${keyfileBasename}
-    echo "using keyfile: $keyfile"
-
-    newKey=0
-    if [ -e "${keyfile}" ]
-    then
-        abs_keyfile=`cygpath -am ${keyfile}`
-        CHROME_BUILDOPTS="${CHROME_BUILDOPTS} --pack-extension-key='${abs_keyfile}'"
-        CRX_OPTS[${#CRX_OPTS[@]}+1]="--pack-extension-key=${keyfile}"
-    else
-        newKey=1
-        CRX_OPTS[${#CRX_OPTS[@]}+1]="--key-output=${keyfile}"
-    fi
-
-    #echo "Using CHROME_BUILDOPTS: ${CHROME_BUILDOPTS}"
-    chrome ${CHROME_BUILDOPTS}
-
     # First zip up srcdir since zip takes a consistent set of ignore files
     zipFile="artifacts/${chromeType}/${artifactName}-${version}.zip"
     rm -f "${zipFile}"
     zip -r "${zipFile}" ${srcdir} -x "${IGNORE_FILES[@]}"
 
     # Now unzip the zip file into a tempdir:
-    crxSrcDir="artifacts/${chromeType}/${artifactName}-${version}"
-    rm -rf "${crxSrcDir}"
-    unzip ${zipFile} -d "${crxSrcDir}"
-
-    crxFile="artifacts/${chromeType}/${artifactName}-${version}.crx"
-    CRX_OPTS[${#CRX_OPTS[@]}+1]="--pack-extension=${crxSrcDir}/${name}"
-    CRX_OPTS[${#CRX_OPTS[@]}+1]="--extension-output=${crxFile}"
-
-    #echo "CRX_OPTS: ${CRX_OPTS[@]}"
-    crxmake ${CRX_OPTS[@]}
-
-    if [ $newKey -eq 1 ]
-    then
-        mkdir -p ${keydir}
-        mv "${keyfileBasename}" "$keyfile"
-    fi
+    publishedSrcDir="artifacts/${chromeType}/${artifactName}-${version}"
+    rm -rf "${publishedSrcDir}"
+    unzip ${zipFile} -d "${publishedSrcDir}"
 }
 
 if [ $buildType = "all" ] || [ $buildType = "firefox" ]
