@@ -55,7 +55,7 @@ document.querySelectorAll('form#optionsForm .autoChangeOption').addEventListener
 if(IS_FIREFOX) {
 
     // Shortcut options should only be displayed in Firefox.
-    document.getElementById('shortcutOptions').classList.add('browser-firefox');
+    document.getElementById('main').classList.add('browser-firefox');
 
     /**
      * Shortcut key validation:
@@ -512,4 +512,6 @@ if(IS_FIREFOX) {
 
     document.addEventListener("DOMContentLoaded", initCustomShortcutFields);
     document.addEventListener("DOMContentLoaded", initShortcutHelpTextHandlers);
+} else if (IS_CHROME) {
+    document.getElementById('main').classList.add('browser-chrome');
 }

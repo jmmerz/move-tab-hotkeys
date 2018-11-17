@@ -28,8 +28,12 @@
           display: none;
         }
 
-        #shortcutOptions.browser-firefox {
+        .browser-firefox #shortcutOptions {
           display: block;
+        }
+
+        #main.browser-chrome {
+          padding-top: 3em;
         }
 
         div.optionGroup {
@@ -120,6 +124,10 @@
           float: right;
           height: inherit;
           min-width: 65%;
+        }
+
+        .browser-chrome .options-right {
+          min-width: 60%;
         }
 
         label {
@@ -237,7 +245,7 @@
 
   <body>
 
-    <div class='main'>
+    <div id='main' class='main'>
       <form id="optionsForm" autocomplete="off" spellcheck="false">
 
         <div id='shortcutOptions' class='optionGroup'>
