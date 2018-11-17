@@ -118,10 +118,17 @@ if(IS_FIREFOX) {
     /**
      * Classes used for shortcuts.
      */
+    const CLASS_OPTIONS_ROW = "options-row";
+    const CLASS_OPTIONS_LEFT = 'options-left';
+    const CLASS_OPTIONS_RIGHT = 'options-right';
     const CLASS_SHORTCUT_KEY = 'shortcutKey';
     const CLASS_SHORTCUT_UNSET = 'unset';
     const CLASS_SHORTCUT_VALID = 'valid';
     const CLASS_SHORTCUT_INVALID = 'invalid';
+    const CLASS_EXAMPLE_TEXT = 'example-text';
+    const CLASS_TOOLTIP_TEXT = 'tooltip-text';
+    const CLASS_TOOLTIP_TOP = 'tooltip-top';
+    const CLASS_HAS_TOOLTIP = 'has-tooltip';
 
     /**
      * Utility method to sort commands according to the commandName2OrderIndex defined above.
@@ -149,20 +156,28 @@ if(IS_FIREFOX) {
 
             let commandDiv = document.createElement('div');
             commandDiv.id = command.name + '_form';
+            commandDiv.classList.add(CLASS_OPTIONS_ROW);
 
             // Create label
+            let optionsLeftDiv = document.createElement('div');
+            optionsLeftDiv.classList.add(CLASS_OPTIONS_LEFT);
             let label = document.createElement('label');
             label.setAttribute('for', commandFieldId);
             let commandDescription = command.description;
             let commandExampleText = null;
             if(!isPrimarySet) {
                 commandExampleText = commandDescription.match(/.*( \(.*\)$)/)[1].trim();
+                // Strip the leading and trailing parenthesis from the example text
+                commandExampleText = commandExampleText.substring(1,commandExampleText.length-1);
                 commandDescription = commandDescription.match(/(.*) \(.*\)$/)[1];
             }
             label.appendChild(document.createTextNode(commandDescription + ':'));
-            commandDiv.appendChild(label);
+            optionsLeftDiv.appendChild(label);
 
             // Create <input>
+            let optionsRightDiv = document.createElement('div');
+            optionsRightDiv.classList.add(CLASS_OPTIONS_RIGHT);
+
             let inputField = document.createElement('input');
             inputField.type = 'text';
             inputField.id = commandFieldId;
@@ -171,17 +186,12 @@ if(IS_FIREFOX) {
             inputField.undoStack = new Array();
             inputField.currentKeyValue = command.shortcut;
             setInputFieldValue(inputField, command.shortcut);
-            commandDiv.appendChild(inputField);
+            optionsRightDiv.appendChild(inputField);
 
-            /*
-             * HTML Symbols:
-             * https://www.w3schools.com/charsets/ref_utf_geometric.asp
-             * https://www.w3schools.com/charsets/ref_utf_symbols.asp
-             */
-            let inputValidationStatusSpanUnset = document.createElement('span');
-            inputValidationStatusSpanUnset.classList.add('input-validation-status');
-            inputValidationStatusSpanUnset.appendChild(document.createTextNode('\u25CF')); // BLACK CIRCLE
-            commandDiv.appendChild(inputValidationStatusSpanUnset);
+            // Circle to indicate validity of specified keyboard shortcut
+            let inputValidationStatusDivUnset = document.createElement('div');
+            inputValidationStatusDivUnset.classList.add('input-validation-status');
+            optionsRightDiv.appendChild(inputValidationStatusDivUnset);
 
             // Create update button
             let updateShortcutButton = document.createElement('button');
@@ -189,7 +199,7 @@ if(IS_FIREFOX) {
             updateShortcutButton.appendChild(document.createTextNode('Update'));
             updateShortcutButton.inputFieldId = commandFieldId;
             updateShortcutButton.addEventListener('click', handleUpdateButtonClick);
-            commandDiv.appendChild(updateShortcutButton);
+            optionsRightDiv.appendChild(updateShortcutButton);
 
             // Create undo button (revert to pre-edit state)
             let undoShortcutButton = document.createElement('button');
@@ -197,7 +207,7 @@ if(IS_FIREFOX) {
             undoShortcutButton.appendChild(document.createTextNode('Undo'));
             undoShortcutButton.inputFieldId = commandFieldId;
             undoShortcutButton.addEventListener('click', handleUndoButtonClick);
-            commandDiv.appendChild(undoShortcutButton);
+            optionsRightDiv.appendChild(undoShortcutButton);
 
             // Create reset button (revert to addon defaults)
             let resetShortcutButton = document.createElement('button');
@@ -205,15 +215,21 @@ if(IS_FIREFOX) {
             resetShortcutButton.appendChild(document.createTextNode('Restore Default'));
             resetShortcutButton.inputFieldId = commandFieldId;
             resetShortcutButton.addEventListener('click', handleRestoreDefaultButtonClick);
-            commandDiv.appendChild(resetShortcutButton);
+            optionsRightDiv.appendChild(resetShortcutButton);
 
             // Add example text if present
             if(commandExampleText) {
-                let exampleTextDiv = document.createElement('div');
-                exampleTextDiv.classList.add('example-text');
-                exampleTextDiv.appendChild(document.createTextNode(commandExampleText));
-                commandDiv.appendChild(exampleTextDiv);
+                let toolTipText = document.createElement('span');
+                toolTipText.classList.add(CLASS_EXAMPLE_TEXT);
+                toolTipText.classList.add(CLASS_TOOLTIP_TEXT);
+                toolTipText.classList.add(CLASS_TOOLTIP_TOP);
+                toolTipText.appendChild(document.createTextNode(commandExampleText));
+                label.classList.add(CLASS_HAS_TOOLTIP);
+                label.appendChild(toolTipText);
             }
+
+            commandDiv.appendChild(optionsLeftDiv);
+            commandDiv.appendChild(optionsRightDiv);
 
             let customShortcutsDiv = isPrimarySet
                                         ? primaryCustomShortcutsDiv
