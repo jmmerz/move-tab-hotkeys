@@ -1,40 +1,40 @@
     "commands": {
         "move-tab-left": {
             "suggested_key": { "default": "Alt+Shift+Left" },
-            "description": "Move the selected tab(s) left"
+            "description": "Move tab(s) left"
         },
 
 
         "move-tab-right": {
             "suggested_key": { "default": "Alt+Shift+Right" },
-            "description": "Move the selected tab(s) right"
+            "description": "Move tab(s) right"
         },
 
 
         "move-tab-first-numbers-row": {
             "suggested_key": { "default": "Alt+Shift+0" },
-            "description": "Move the selected tab(s) to the start"
+            "description": "Move tab(s) to the start"
         },
         "move-tab-first-numpad-numlock-on": {
             "suggested_key": { "default": "Alt+Insert" },
-            "description": "Move the selected tab(s) to the start (Example: 'Alt+Insert' for Numeric Keypad 0 with NumLock On)"
+            "description": "Move tab(s) to the start (Example: 'Alt+Insert' for Numeric Keypad 0 with NumLock On)"
         },
         "move-tab-first-numpad-numlock-off": {
             "suggested_key": { "default": "Alt+Shift+Insert" },
-            "description": "Move the selected tab(s) to the start (Example: 'Alt+Shift+Insert' for Numeric Keypad 0 with NumLock Off)"
+            "description": "Move tab(s) to the start (Example: 'Alt+Shift+Insert' for Numeric Keypad 0 with NumLock Off)"
         },
 
 
         "move-tab-last-numbers-row": {
             "suggested_key": { "default": "Alt+Shift+9" },
-            "description": "Move the selected tab(s) to the end"
+            "description": "Move tab(s) to the end"
         },
         "move-tab-last-numpad-numlock-on": {
             "suggested_key": { "default": "Alt+PageUp" },
-            "description": "Move the selected tab(s) to the end (Example: 'Alt+PageUp' for Numeric Keypad 9 with NumLock On)"
+            "description": "Move tab(s) to the end (Example: 'Alt+PageUp' for Numeric Keypad 9 with NumLock On)"
         },
         "move-tab-last-numpad-numlock-off": {
             "suggested_key": { "default": "Alt+Shift+PageUp" },
-            "description": "Move the selected tab(s) to the end (Example: 'Alt+Shift+PageUp' for Numeric Keypad with NumLock Off)"
+            "description": "Move tab(s) to the end (Example: 'Alt+Shift+PageUp' for Numeric Keypad with NumLock Off)"
         }
     }

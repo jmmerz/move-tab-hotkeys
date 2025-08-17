@@ -1,0 +1,7 @@
+    "background": {
+        "scripts": [
+            "common/browserCompatibility.js",
+            "common/globalOptions.js",
+            "moveTabs.js"
+        ]
+    }
