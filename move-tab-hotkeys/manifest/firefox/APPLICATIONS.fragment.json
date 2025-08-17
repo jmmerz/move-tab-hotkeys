@@ -1,7 +1,7 @@
-    "applications": {
+    "browser_specific_settings": {
         "gecko": {
             "id": "move_tabs_hotkeys@jmmerz.github",
-            "strict_min_version": "60.0"
+            "strict_min_version": "109.0"
         }
     },
 

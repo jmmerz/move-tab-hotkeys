@@ -119,8 +119,8 @@ if(IS_FIREFOX) {
      * Classes used for shortcuts.
      */
     const CLASS_OPTIONS_ROW = "options-row";
-    const CLASS_OPTIONS_LEFT = 'options-left';
-    const CLASS_OPTIONS_RIGHT = 'options-right';
+    const CLASS_KEY_SHORTCUT_OPTIONS_LEFT = 'key-shortcut-options-left';
+    const CLASS_KEY_SHORTCUT_OPTIONS_RIGHT = 'key-shortcut-options-right';
     const CLASS_SHORTCUT_KEY = 'shortcutKey';
     const CLASS_SHORTCUT_UNSET = 'unset';
     const CLASS_SHORTCUT_VALID = 'valid';
@@ -160,7 +160,7 @@ if(IS_FIREFOX) {
 
             // Create label
             let optionsLeftDiv = document.createElement('div');
-            optionsLeftDiv.classList.add(CLASS_OPTIONS_LEFT);
+            optionsLeftDiv.classList.add(CLASS_KEY_SHORTCUT_OPTIONS_LEFT);
             let label = document.createElement('label');
             label.setAttribute('for', commandFieldId);
             let commandDescription = command.description;
@@ -176,7 +176,7 @@ if(IS_FIREFOX) {
 
             // Create <input>
             let optionsRightDiv = document.createElement('div');
-            optionsRightDiv.classList.add(CLASS_OPTIONS_RIGHT);
+            optionsRightDiv.classList.add(CLASS_KEY_SHORTCUT_OPTIONS_RIGHT);
 
             let inputField = document.createElement('input');
             inputField.type = 'text';

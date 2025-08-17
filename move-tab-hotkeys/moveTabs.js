@@ -1,3 +1,16 @@
+// ----------------------------------------------------------------------
+// IMPORTS
+// Now required because Chrome only supports background.service_worker (a single string)
+// and no longer supports background.scripts (a list of strings)
+// ----------------------------------------------------------------------
+// Test if we're on Chrome, but we can't yet load browserCompatibility...
+if(((typeof browser === 'undefined') && (typeof chrome !== 'undefined'))) {
+    importScripts(
+        './common/browserCompatibility.js',
+        './common/globalOptions.js'
+    );
+}
+
 // Configurable options:
 var disableTabWrap = false;
 var disableTabMultiselect = false;

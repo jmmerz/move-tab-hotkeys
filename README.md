@@ -33,6 +33,12 @@ If multiple tabs are selected, they can be moved together.
 
 ## Version History:
 
+#### [2.3.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v2.3.0):
+* Update to Manifest V3
+
+#### [2.2.1](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v2.2.1):
+* Add a new 128x128 icon to satisfy Chrome Web Store requirements
+
 #### [2.2.0](https://github.com/jmmerz/move-tab-hotkeys/releases/tag/v2.2.0):
 * Add ability to move multiple tabs at once if multiple are selected. (#13)
 * Firefox: Update validation of shortcut keys to support newly allowed combinations starting with

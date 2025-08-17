@@ -4,9 +4,13 @@
   <head>
     <meta charset="utf-8">
     <style type="text/css">
+        body {
+          margin-bottom: 0px;
+          margin-top: 10px;
+          margin-left: 0px;
+          margin-right: 0px;
+        }
         .main {
-          max-width: 700px;
-          min-width: 650px;
         }
 
         h2 {
@@ -18,8 +22,15 @@
 
         h3 {
           margin-top: 5px;
-          padding-top: 5px;
           margin-bottom: 0px;
+          padding-top: 3px;
+          padding-bottom: 3px;
+        }
+
+        h4 {
+          margin-top: 5px;
+          margin-bottom: 0px;
+          padding-top: 5px;
           padding-bottom: 5px;
         }
 
@@ -113,20 +124,28 @@
         }
         /* }}} END: Shortcuts help animation: */
 
-        .options-left {
+        .key-shortcut-options-left {
           float: left;
           height: inherit;
-          max-width: 35%;
-          min-width: 230px;
+          max-width: 30%;
+          min-width: 170px;
         }
 
-        .options-right {
+        .key-shortcut-options-right {
           float: right;
           height: inherit;
-          min-width: 65%;
+          max-width: 65%;
+          min-width: 400px;
         }
 
-        .browser-chrome .options-right {
+        /* "Regular" options - Tab movement and Debug */
+        .options-left {
+          height: inherit;
+          max-width: 90%;
+          min-width: 300px;
+        }
+
+        .browser-chrome .key-shortcut-options-right {
           min-width: 60%;
         }
 
@@ -250,18 +269,18 @@
 
         <div id='shortcutOptions' class='optionGroup'>
           <div id="shortcutsHeader" class="shortcuts-header" style='position: relative'>
-            <h2 class="alignleft">Keyboard Shortcuts:</h2>
+            <h3 class="alignleft">Keyboard Shortcuts</h3>
             <h2 id='shortcutHelpTextToggle' class="alignright"><!--&#x2754;-->?</h2>
             <div class='transform shortcutHelpContainer' id='shortcutHelpTextDiv'>
               <div class='shortcutHelpText'>
-                <h3>Keyboard Shortcut Help:</h3>
+                <h3>Keyboard Shortcut Help</h3>
                 <h4>Use any of these patterns:</h4>
                 <ul>
                   <li><b>Modifier+Key</b> <i>(Example: Alt+Left)</i></li>
                   <li><b>Modifier+SecondaryModifier+Key</b> <i>(Example: Alt+Shift+Left)</i></li>
                   <li><b>MediaKey</b> <i>(Example: MediaNextTrack)</i></li>
                 </ul>
-                <h4>Definitions:</h4>
+                <h4>Definitions</h4>
                 <ul>
                   <li><u>Modifier</u> (<b>mandatory</b>, except for function keys (F1-12)): "Ctrl", "Alt", "Command" or "MacCtrl"</li>
                   <li><u>Secondary Modifier</u> (<i>optional</i>): For Firefox version &lt; 63, must be "Shift". For Firefox version 63 or later, any one of "Ctrl", "Alt", "Command" and "MacCtrl" that has not been used as the main modifier is also allowed.</li>
@@ -282,19 +301,19 @@
             </div>
           </div>
           <div id='custom_shortcuts_primary' class='optionSubGroup'>
-            <h3>Primary Shortcuts:</h3>
+            <h4>Primary Shortcuts</h4>
           </div>
 
           <hr/>
 
           <div id='custom_shortcuts_secondary' class='optionSubGroup'>
-            <h3>Secondary Shortcuts:</h3>
+            <h4>Secondary Shortcuts</h4>
             <div class="secondary-shortcut-explanation">Additional instances of the movements to start and end. This allows multiple shortcuts, for instance to allow use of the numeric keypad. Hover over text for examples.</div>
           </div>
         </div>
 
         <div class='optionGroup'>
-          <h2>Tab Movement Options:</h2>
+          <h3>Tab Movement</h3>
           <div class="options-left">
           <input type="checkbox"
                  class="autoChangeOption"
@@ -306,7 +325,7 @@
           </label>
           </div>
 
-          <div class="options-right">
+          <div class="options-left">
           <input type="checkbox"
                  class="autoChangeOption"
                  id="disable_tab_multiselect"
@@ -319,7 +338,7 @@
         </div>
 
         <div class='optionGroup'>
-          <h2>Debugging:</h2>
+          <h3>Debugging</h3>
           <input type="checkbox"
                  class="autoChangeOption"
                  id="GLOBAL_enable_debug_logging"

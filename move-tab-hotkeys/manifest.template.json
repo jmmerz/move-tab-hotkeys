@@ -2,8 +2,8 @@
     "name": "Move Tab Hotkeys${TITLE_EXTRA}",
     "description": "Hotkeys to move tabs around",
     "homepage_url": "https://github.com/jmmerz/move-tab-hotkeys",
-    "manifest_version": 2,
-    "version": "2.2.1",
+    "manifest_version": 3,
+    "version": "2.3.0",
     ${APPLICATIONS}
     "author": "Jonathon Merz",
     "icons": {
@@ -14,14 +14,7 @@
     "permissions": [
         "storage"
     ],
-
-    "background": {
-        "scripts": [
-            "common/browserCompatibility.js",
-            "common/globalOptions.js",
-            "moveTabs.js"
-        ]
-    },
+    ${BACKGROUND},
     ${COMMANDS},
     "options_ui": {
         "page": "options/options.html"
