@@ -27,7 +27,7 @@ If multiple tabs are selected, they can be moved together.
   `browser.tabs.multiselect` property in `about:config`.
 
 ## Installation:
-* [Install for Firefox](https://addons.mozilla.org/en-US/firefox/addon/move-tab-hotkeys/)
+* [Install for Firefox](https://addons.mozilla.org/firefox/addon/move-tab-hotkeys/)
 * [Install for Chrome](https://chrome.google.com/webstore/detail/move-tab-hotkeys/paafmjjgeiociknojggclhkbkaffjgoe)
     * [Install for Chrome - Extra addon for using number pad](https://chrome.google.com/webstore/detail/omhajbebapbleblliebjpmddcmalofgp)
 
